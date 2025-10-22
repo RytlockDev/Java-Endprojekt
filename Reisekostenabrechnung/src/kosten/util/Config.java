@@ -1,6 +1,6 @@
 package kosten.util;
 
-public class config {
+public class Config {
 	/** Erzeugt einen MySQL Treiber um<br> 
 	 *  um sich mit einer DB zu verbinden*/ 
 	public static final String TREIBER = "com.mysql.cj.jdbc.Driver";
