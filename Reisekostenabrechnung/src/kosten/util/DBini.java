@@ -7,10 +7,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDateTime;
 
 public class DBini {
 	public static void erzeugeMitarbeiter() {
-		try {			
+		try {
+			
 			Connection conn = DriverManager.getConnection(Config.KOSTEN_URI);
 			
 			String sql = "SELECT * FROM mitarbeiter";
@@ -90,6 +92,9 @@ public class DBini {
 																						maDaten[2], 
 																						Integer.parseInt(maDaten[3]), 
 																						maDaten[4]);
+			for(Object m: Mitarbeiter.mitarbeiter) {
+				System.out.println(((Mitarbeiter) m).getPers_id());
+			}
 			// Statement Schliesen
 			stmt.close();
 			// DB Schliesen
@@ -102,20 +107,24 @@ public class DBini {
 
 	public static void schreibeKostenart(int pers_id, Date datum, int[][] kostenartAnzahl,
 			double[] gesamtVerguetung) {
-		int i = 0;
 		try {
 			Connection conn = DriverManager.getConnection(Config.KOSTEN_URI);
 			
 			String sql = "INSERT INTO reisekosten (datum, pers_id, ka_id, anzahl, gesamtverguetung) VALUES (?, ?, ?, ?, ?)";
 			PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 			
-			stmt.setDate(1, datum);
-			stmt.setInt(2, pers_id);
-			stmt.setInt(3, kostenartAnzahl[0][i]);
-			stmt.setInt(4, kostenartAnzahl[1][i]);
-			stmt.setDouble(5, gesamtVerguetung[i]);
+			for(int i = 0; i < kostenartAnzahl.length; i++) {
+				if(kostenartAnzahl[i][1] > 0) {					
+					stmt.setDate(1, datum);
+					stmt.setInt(2, pers_id);
+					stmt.setInt(3, kostenartAnzahl[i][0]);
+					stmt.setInt(4, kostenartAnzahl[i][1]);
+					stmt.setDouble(5, gesamtVerguetung[i]);
+					
+					stmt.executeUpdate();
+				}
 			
-			stmt.executeUpdate();
+		    }
 			
 			// Statement Schliesen
 			stmt.close();

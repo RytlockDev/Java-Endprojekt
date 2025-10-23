@@ -109,8 +109,6 @@ public class MainPanel extends JPanel implements ActionListener {
                     double ergebniss = zahl * faktor;
                     MainPanel.gesamtVerguetung[row] = ergebniss;
                     
-                    System.out.println(MainPanel.kostenartAnzahl[row]);
-                    System.out.println(MainPanel.gesamtVerguetung[row]);
                     // Setze den Wert in Spalte 4 (Index 3)
                     // WICHTIG: Wir müssen den Listener kurz entfernen,
                     // damit diese Änderung nicht wieder ein Event auslöst!
@@ -187,7 +185,7 @@ public class MainPanel extends JPanel implements ActionListener {
 			}
 		} else if(e.getSource() == btnSave) {
 			int pers_id;
-			Date datum;
+			java.util.Date datum;
 			String[] maDaten = {
 					tfNachname.getText(),
 					tfVorname.getText(),
@@ -214,8 +212,9 @@ public class MainPanel extends JPanel implements ActionListener {
 			SimpleDateFormat inputFormat =  new SimpleDateFormat(Config.DATUM_FORMAT);
 			
 			try {
-				datum = (Date) inputFormat.parse(tfDatum.getText());
-				DBini.schreibeKostenart(pers_id, datum, 
+				datum = inputFormat.parse(tfDatum.getText());
+				java.sql.Date sqlDate = new java.sql.Date(datum.getTime());
+				DBini.schreibeKostenart(pers_id, sqlDate, 
 							    	MainPanel.kostenartAnzahl, 
 							    	MainPanel.gesamtVerguetung);
 			} catch (ParseException e1) {
