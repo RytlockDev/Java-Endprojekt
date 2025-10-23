@@ -6,7 +6,7 @@ public class Mitarbeiter {
 	//========================
 	/** Array mit Mitarbeiter-Objekten die am anfang<br>
 	 *  erzeugt und hier reingelegt werden */
-	public static  Mitarbeiter[] mitarbeiter =  new Mitarbeiter[0];
+	public static  Object[] mitarbeiter =  new Mitarbeiter[0];
 	
 	//========================
 	// Eigenschaften
@@ -63,5 +63,10 @@ public class Mitarbeiter {
 
 	public String getOrt() {
 		return ort;
+	}
+	
+	@Override
+	public String toString() {
+		return pers_id + ": " + nachname;
 	}
 }

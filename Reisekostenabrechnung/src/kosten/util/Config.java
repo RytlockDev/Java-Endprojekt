@@ -6,5 +6,7 @@ public class Config {
 	public static final String TREIBER = "com.mysql.cj.jdbc.Driver";
 	
 	/** Verbindungs Details fur die Datenbank "kosten"*/
-	public static final String KOSTEN_URI = "jdbc:mysql://127.0.0.1/kosten?user=javauser&password=profil";	
+	public static final String KOSTEN_URI = "jdbc:mysql://127.0.0.1/kosten?user=javauser&password=profil";
+	
+	public static final String DATUM_FORMAT = "dd.MM.yyyy";
 }

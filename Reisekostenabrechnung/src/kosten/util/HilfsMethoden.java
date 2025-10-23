@@ -17,6 +17,7 @@ public class HilfsMethoden {
 		return temp;
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static JComboBox fuelleCombobox(JComboBox combobox, Object[] array) {
 		combobox.removeAllItems();
 		combobox.addItem(null);
@@ -26,4 +27,16 @@ public class HilfsMethoden {
 		return combobox;
 	}
 
+	public static int holeID(String[] maDaten) {
+		for(int i = 0; i < Mitarbeiter.mitarbeiter.length; i++) {
+			if(((Mitarbeiter) Mitarbeiter.mitarbeiter[i]).getNachname().equals(maDaten[0])
+			&& ((Mitarbeiter) Mitarbeiter.mitarbeiter[i]).getVorname().equals(maDaten[1])
+			&& ((Mitarbeiter) Mitarbeiter.mitarbeiter[i]).getStrasse().equals(maDaten[2])
+			&& ((Mitarbeiter) Mitarbeiter.mitarbeiter[i]).getPlz() == Integer.parseInt(maDaten[3])
+			&& ((Mitarbeiter) Mitarbeiter.mitarbeiter[i]).getOrt().equals(maDaten[4])){
+				return ((Mitarbeiter) Mitarbeiter.mitarbeiter[i]).getPers_id();
+			}
+		}
+		return -1;
+	}
 }

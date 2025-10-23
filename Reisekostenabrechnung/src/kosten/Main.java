@@ -9,7 +9,7 @@ public class Main extends JFrame {
 
 	public Main(String titel) {
 		super(titel);
-		setBounds(200, 200, 600, 500);
+		setBounds(200, 200, 600, 400);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setResizable(false);
 		add(new MainPanel());
