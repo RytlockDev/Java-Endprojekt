@@ -7,20 +7,28 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.time.LocalDateTime;
 
 public class DBini {
+	/**
+	 * Erzeugt die Mitarbeiter Objekte aus der Datenbank<br>
+	 * und speichert sie im Mitarbeiter Array
+	 */
 	public static void erzeugeMitarbeiter() {
 		try {
-			
+			// Stellt die Verbindung zur DB her
 			Connection conn = DriverManager.getConnection(Config.KOSTEN_URI);
 			
+			// SQL-Statement erstellen un die Daten abzurufen 
 			String sql = "SELECT * FROM mitarbeiter";
 			Statement stmt = conn.createStatement();
 			
+			// Speichert die Angekommen Daten in einem ResultSet
 			ResultSet result = stmt.executeQuery(sql);
 			
 			int i = 0;
+			// Vergroesert das Mitarbeiter Array um 1 und Speichert dann einen
+			// Mitarbeiter aus dem ResultSet in dem ArrayIndex
+			// Speichert alle Mitarbeiter aus der DB
 			while(result.next()) {
 				Mitarbeiter.mitarbeiter =  HilfsMethoden.arrayVergroesern(Mitarbeiter.mitarbeiter);
 				Mitarbeiter.mitarbeiter[i++] = new Mitarbeiter(result.getInt("pers_id"), 
@@ -31,7 +39,9 @@ public class DBini {
 															   result.getString("ort"));
 			}  
 		  	  
-			stmt.close();  
+			// Statement Schliesen
+			stmt.close();
+			// DB Schliesen
 			conn.close();  	  		  
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
@@ -39,16 +49,25 @@ public class DBini {
 		
 	}
 
+	/**
+	 * Liest die Kostenarten aus der DB aus und Speicher sie im Array<br>
+	 * fuer die Tabellendaten
+	 * @param array Das Array fuer die Tabellendaten
+	 */
 	public static void holeKostenart(Object[][] array) {
 		try {
+			// Stellt die Verbindung zur DB her
 			Connection conn = DriverManager.getConnection(Config.KOSTEN_URI);
 			
+			// SQL-Statement erstellen un die Daten abzurufen
 			String sql = "SELECT beschreibung, einzelverguetung FROM kostenart";
 			Statement stmt = conn.createStatement();
 			
+			// Speichert die Angekommen Daten in einem ResultSet
 			ResultSet result = stmt.executeQuery(sql);
 			
 			int i = 0;
+			// Speichert die Kostenarten ins Tabellen Array
 			while(result.next()) {
 				array[i][0] = result.getString("beschreibung");
 				array[i][2] = result.getDouble("einzelverguetung") + "";
@@ -63,38 +82,51 @@ public class DBini {
 			e.printStackTrace();
 		}
 	}
-
-	public static void speichereMitarbeiter(String[] maDaten) {
-		int generatedKey;
+	
+	/**
+	 * Speichert einen neuen Mitarbeiter wenn er noch nicht existiert<br>
+	 * in der Datenbank ab und erweitert das mitarbeiter Array und fuegt<br>
+	 * ihn gleich hinzu
+	 * @param array String Array mit den Mitarbeiter Daten
+	 * @return Gibt die erzeugte ID die die Personlanummer darstellt zum<br>
+	 * 		   weiterverarbeiten zurueck
+	 */
+	public static int speichereMitarbeiter(String[] array) {
+		int generatedKey = 0;
 		try {
+			// Stellt die Verbindung zur DB her
 			Connection conn = DriverManager.getConnection(Config.KOSTEN_URI);
 			
+			// erstellt ein Vorgefertigtes SQL-Statement mit Platzhaltern
 			String sql = "INSERT INTO mitarbeiter (nachname, vorname, strasse, plz, ort) VALUES (?, ?, ?, ?, ?)";
 			PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 			
 			// Werte aus dem Array einsetzen
-			stmt.setString(1, maDaten[0]);
-			stmt.setString(2, maDaten[1]);
-			stmt.setString(3, maDaten[2]);
-			int plz = Integer.parseInt(maDaten[3]);
+			stmt.setString(1, array[0]);
+			stmt.setString(2, array[1]);
+			stmt.setString(3, array[2]);
+			int plz = Integer.parseInt(array[3]);
 			stmt.setInt(4, plz);
-			stmt.setString(5, maDaten[4]);
+			stmt.setString(5, array[4]);
 			
 			stmt.executeUpdate();
 			
+			// Holt die erstelle ID aus dem ResultSet und speichert ihn
+			// in der am anfang erszeugten Variable
 			ResultSet result = stmt.getGeneratedKeys();
-			generatedKey = result.getInt(1);
+			if(result.next()) {
+				generatedKey = result.getInt(1);
+			}
 			
+			// Vergroesert das Mitarbeiter Array um 1 und Speichert dann einen
+			// Mitarbeiter der neu Angelegt wurde an die letzte stelle im Array
 			Mitarbeiter.mitarbeiter =  HilfsMethoden.arrayVergroesern(Mitarbeiter.mitarbeiter);
 			Mitarbeiter.mitarbeiter[Mitarbeiter.mitarbeiter.length-1] = new Mitarbeiter(generatedKey, 
-																						maDaten[0], 
-																						maDaten[1], 
-																						maDaten[2], 
-																						Integer.parseInt(maDaten[3]), 
-																						maDaten[4]);
-			for(Object m: Mitarbeiter.mitarbeiter) {
-				System.out.println(((Mitarbeiter) m).getPers_id());
-			}
+																							   array[0], 
+																							   array[1], 
+																							   array[2], 
+																							   Integer.parseInt(array[3]), 
+																							   array[4]);
 			// Statement Schliesen
 			stmt.close();
 			// DB Schliesen
@@ -102,17 +134,31 @@ public class DBini {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		return generatedKey;
 		
 	}
 
-	public static void schreibeKostenart(int pers_id, Date datum, int[][] kostenartAnzahl,
+	/**
+	 * Speichert aus der Tabelle jeden Datensatz einzeln der<br>
+	 * eine anzahl groesser als 0 hatt
+	 * @param datum Datum der Abrechnung
+	 * @param pers_id Personalnummer des MA
+	 * @param kostenartAnzahl Array mit der Anzahl und der Kosatenart als <br>
+	 * 		  in einem Zweidimensionalen Array
+	 * @param gesamtVerguetung Die erechnete verguetung zu jeder Anzahl
+	 */
+	public static void schreibeKostenart(Date datum, int pers_id, int[][] kostenartAnzahl,
 			double[] gesamtVerguetung) {
 		try {
+			// Stellt die Verbindung zur DB her
 			Connection conn = DriverManager.getConnection(Config.KOSTEN_URI);
 			
+			// erstellt ein Vorgefertigtes SQL-Statement mit Platzhaltern
 			String sql = "INSERT INTO reisekosten (datum, pers_id, ka_id, anzahl, gesamtverguetung) VALUES (?, ?, ?, ?, ?)";
 			PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 			
+			// Geht das gesamte Array der tabelle durch und erstellt fuer
+			// jede Zeile einen Datensatz in der DB wenn die Anzahl groeser 0 ist
 			for(int i = 0; i < kostenartAnzahl.length; i++) {
 				if(kostenartAnzahl[i][1] > 0) {					
 					stmt.setDate(1, datum);
@@ -133,7 +179,6 @@ public class DBini {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-		
+		}		
 	}
 }

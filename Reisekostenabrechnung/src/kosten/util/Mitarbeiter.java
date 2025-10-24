@@ -11,11 +11,15 @@ public class Mitarbeiter {
 	//========================
 	// Eigenschaften
 	//========================
-	/**  */
+	/** Personalnummer */
 	private int pers_id;
-	private String nachname, vorname; 
+	/** Nachname und Vorname des MA */
+	private String nachname, vorname;
+	/** Strasse des MA */
 	private String strasse;
+	/** PLZ im Bereich von 1000 - 9999 */
 	private int plz;
+	/** Ort der Strasse */
 	private String ort;
 	
 	//========================
@@ -65,6 +69,9 @@ public class Mitarbeiter {
 		return ort;
 	}
 	
+	//========================
+	// Ueberschriebene Methoden
+	//========================
 	@Override
 	public String toString() {
 		return pers_id + ": " + nachname;

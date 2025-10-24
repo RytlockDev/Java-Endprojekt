@@ -2,12 +2,11 @@ package kosten.view;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Date;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
@@ -29,12 +28,22 @@ import kosten.util.HilfsMethoden;
 import kosten.util.Mitarbeiter;
 
 @SuppressWarnings("serial")
-public class MainPanel extends JPanel implements ActionListener {
+public class MainPanel extends JPanel 
+					   implements ActionListener {
+	//========================
+	// Klasseneigenschaften
+	//========================
+	// Arrays um die Eingabe zu Speichern
+	private static int[][] kostenartAnzahl = new int[4][2];
+	private static double[] gesamtVerguetung = new double[4];
+	private static String[] maDaten = new String[5];
+	
 	//========================
 	// Eigenschaften
 	//========================
 	// JButtons
 	private JButton btnSelect = new JButton("Auswehlen");
+	private JButton btnRemove = new JButton("Abwaehlen");
 	private JButton btnSave = new JButton("Speichern");
 	private JButton btnCancel = new JButton("Abbrechen");
 	
@@ -55,18 +64,24 @@ public class MainPanel extends JPanel implements ActionListener {
 	private JLabel meldungen = new JLabel(" ");
 	
 	// Elementarrays
-	private JComponent[] menueBar = {new JLabel(""), new JLabel(""), new JLabel(""), new JLabel("Mitarbeiter: "), cbMitarbeiter, btnSelect, new JLabel(""), new JLabel(""),
-								    btnSave, btnCancel};
-	private JComponent[] mitarbeiterDaten = {new JLabel("Nachname :"), tfNachname, new JLabel("Vorname :"), tfVorname,
-											 new JLabel("Strasse :"), tfStrasse, new JLabel(""), new JLabel(""),
-											 new JLabel("PLZ :"), tfPlz, new JLabel("Ort :"), tfOrt, 
-											 new JLabel(""), new JLabel(""), new JLabel(""), new JLabel("")};
-	private String[] columNames = {"Kostenart", "Anzahl", "Einzelverguetung", "Gesamtverguetung"};
-	private Object[][] tableData = new String[4][4];
-	private static int[][] kostenartAnzahl = new int[4][2];
-	private static double[] gesamtVerguetung = new double[4];
+	private JTextField[] mitarbeierEingaben = {tfNachname, tfVorname, tfStrasse, tfPlz, tfOrt};
+	private JComponent[] menueElemente = {new JLabel(""), new JLabel(""), new JLabel(""), new JLabel("Mitarbeiter: "), 
+										  cbMitarbeiter, btnSelect, btnRemove, new JLabel(""), btnSave, btnCancel};
+	private JComponent[] mitarbeiterElemente = {new JLabel("Nachname :"), tfNachname, new JLabel("Vorname :"), tfVorname,
+											    new JLabel("Strasse :"), tfStrasse, new JLabel(""), new JLabel(""),
+											    new JLabel("PLZ :"), tfPlz, new JLabel("Ort :"), tfOrt, 
+											    new JLabel(""), new JLabel(""), new JLabel(""), new JLabel("")};
+	private String[] SpaltenUeberschriften = {"Kostenart", "Anzahl", "Einzelverguetung", "Gesamtverguetung"};
+	private Object[][] tabellenDaten = new String[4][4];
+	
+	// Initialiesierung des Tabellen Models
+	// um von ausden draufzugreifen zu koennen
+	private DefaultTableModel model;
 	
 	
+	//========================
+	// Konstruktor
+	//========================
 	public MainPanel() {
 		// DB-Treiber registrieren
 		try {
@@ -75,14 +90,14 @@ public class MainPanel extends JPanel implements ActionListener {
 			e.printStackTrace();
 		}
 		DBini.erzeugeMitarbeiter();
-		cbMitarbeiter = HilfsMethoden.fuelleCombobox(cbMitarbeiter, Mitarbeiter.mitarbeiter);
-		DBini.holeKostenart(tableData);
+		HilfsMethoden.fuelleCombobox(cbMitarbeiter, Mitarbeiter.mitarbeiter);
+		DBini.holeKostenart(tabellenDaten);
 		
 		setLayout(new BorderLayout(15, 15));
 		setBorder(new EmptyBorder(10, 10, 10, 10));
 		
 		
-		DefaultTableModel model = new DefaultTableModel(tableData, columNames) {
+		model = new DefaultTableModel(tabellenDaten, SpaltenUeberschriften) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 // nur die Zweite Spalte Editierbar machen
@@ -119,6 +134,10 @@ public class MainPanel extends JPanel implements ActionListener {
             }
         });
 		JTable table = new JTable(model);
+		table.getTableHeader().setFont(new Font("Arial", Font.BOLD, 14));
+		table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+		table.setRowHeight(25);
+		table.setFont(new Font("Arial", Font.PLAIN, 12));
 		JScrollPane scrollPane = new JScrollPane(table);
 		
 		JPanel center = new JPanel(new GridLayout(3, 1, 5, 5));
@@ -136,10 +155,10 @@ public class MainPanel extends JPanel implements ActionListener {
 				kopf.add(new JLabel(""));
 			}
 		}
-		for(JComponent element: mitarbeiterDaten) {
+		for(JComponent element: mitarbeiterElemente) {
 			maDaten.add(element);
 		}
-		for(JComponent element: menueBar) {
+		for(JComponent element: menueElemente) {
 			if(element instanceof JButton) {
 				((JButton) element).addActionListener(this);
 			}
@@ -157,12 +176,17 @@ public class MainPanel extends JPanel implements ActionListener {
 		add(BorderLayout.EAST, east);
 		meldungen.setHorizontalAlignment(JLabel.CENTER);
 		add(BorderLayout.SOUTH, meldungen);
+		
+		tabelleAusnullen();
 	}
 
+	//========================
+	// Ueberschriebene Methode
+	//========================
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource() == btnCancel) {
-			maDatenLeeren();
+			formularLeeren();
 			meldungen.setForeground(Color.BLACK);
 			meldungen.setText("Daten zurueckgesetzt");
 		} else if(e.getSource() == btnSelect) {
@@ -183,55 +207,87 @@ public class MainPanel extends JPanel implements ActionListener {
 				meldungen.setForeground(Color.BLACK);
 				meldungen.setText("Mitarbeiter Auswgeweahlt");
 			}
+		} else if(e.getSource() == btnRemove) {
+			cbMitarbeiter.setSelectedItem(null);
+			maDatenLeeren();
+			meldungen.setForeground(Color.BLACK);
+			meldungen.setText("Daten zurueckgesetzt");
 		} else if(e.getSource() == btnSave) {
-			int pers_id;
-			java.util.Date datum;
-			String[] maDaten = {
-					tfNachname.getText(),
-					tfVorname.getText(),
-					tfStrasse.getText(),
-					tfPlz.getText(),
-					tfOrt.getText(),
-			};
-			for(String a: maDaten) {
-				if(a.isBlank()) {
+			int i = 0;
+			for(i = 0; i < mitarbeierEingaben.length; i++) {
+				maDaten[i] = mitarbeierEingaben[i].getText();
+			}
+			if(!tfDatum.getText().matches(Config.DATE_VALIDATION)) {
+				meldungen.setForeground(Color.RED);
+				meldungen.setText("Gebe gueltiges Datum ein!! Format: 02.10.2025");
+				return;
+			}
+			try {
+				if(Integer.parseInt(tfPlz.getText()) < 1000 && Integer.parseInt(tfPlz.getText()) > 9999) {
 					meldungen.setForeground(Color.RED);
-					meldungen.setText("Bitte Mitarbeiter Daten Ausfuellen");
+					meldungen.setText("Postleitzahl muss zwischen 1000 und 9999 liegen");
+					return;
+				}
+			} catch (NumberFormatException nfe) {
+				meldungen.setForeground(Color.RED);
+				meldungen.setText("Darf nur aus Zahlen bestehen");
+				return;
+			}
+			for(String s : maDaten) {
+				if(s.isBlank()) {
+					meldungen.setForeground(Color.RED);
+					meldungen.setText("Bitte Alle Mitarbeiter Daten Ausfuellen");
+					return;			
+				}
+			}
+			for(i = 0; i > kostenartAnzahl.length; i++) {
+				if(kostenartAnzahl[i][1] < 0) {
+					meldungen.setForeground(Color.RED);
+					meldungen.setText("Die Anzahl der Kostenart darf nicht kleiner als 0 sein");
+					return;
 				}
 			}
 			
-			
-			
-			pers_id = HilfsMethoden.holeID(maDaten);
-			if(pers_id == -1) {
-				 DBini.speichereMitarbeiter(maDaten);
-				 pers_id = HilfsMethoden.holeID(maDaten);
-				
+			Mitarbeiter ausgewahterMA = HilfsMethoden.exsistMitarbeiter(maDaten);
+			int pers_id = 0;
+			if(ausgewahterMA == null) {
+				pers_id = DBini.speichereMitarbeiter(maDaten);
+			} else {
+				pers_id = ausgewahterMA.getPers_id();
 			}
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern(Config.DATUM_FORMAT);
+			LocalDate localDate = LocalDate.parse(tfDatum.getText(), formatter);
+			Date sqlDate = Date.valueOf(localDate);
 			
-			SimpleDateFormat inputFormat =  new SimpleDateFormat(Config.DATUM_FORMAT);
+			DBini.schreibeKostenart(sqlDate, pers_id, kostenartAnzahl, gesamtVerguetung);
 			
-			try {
-				datum = inputFormat.parse(tfDatum.getText());
-				java.sql.Date sqlDate = new java.sql.Date(datum.getTime());
-				DBini.schreibeKostenart(pers_id, sqlDate, 
-							    	MainPanel.kostenartAnzahl, 
-							    	MainPanel.gesamtVerguetung);
-			} catch (ParseException e1) {
-				meldungen.setForeground(Color.RED);
-				meldungen.setText("Bitte Gueltiges Datum eingeben, Format: " + Config.DATUM_FORMAT);
-			}
-				
+			formularLeeren();
+			HilfsMethoden.fuelleCombobox(cbMitarbeiter, Mitarbeiter.mitarbeiter);
+			
+			meldungen.setForeground(Color.BLACK);
+			meldungen.setText("Daten Erfolgreich Gespeichert");
 			
 		}
 		
 	}
+	//========================
+	// Sonstige Methoden
+	//========================
+	private void formularLeeren() {
+		tfDatum.setText(" ");
+		maDatenLeeren();
+		tabelleAusnullen();		
+	}
 
 	private void maDatenLeeren() {
-		tfNachname.setText(" ");
-		tfVorname.setText(" ");
-		tfStrasse.setText(" ");
-		tfPlz.setText(" ");
-		tfOrt.setText(" ");		
+		for(JTextField jt: mitarbeierEingaben) {
+			jt.setText(" ");
+		}
+	}
+	
+	private void tabelleAusnullen() {
+		for (int i = 0; i < model.getRowCount(); i++) {
+            model.setValueAt(0, i, 1);
+        }
 	}
 }
