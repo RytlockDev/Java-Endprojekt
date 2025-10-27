@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="15.1">
+  <zoom_level>10</zoom_level>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>160</x>
+      <y>500</y>
+      <w>210</w>
+      <h>150</h>
+    </coordinates>
+    <panel_attributes>Mitarbeiter
+--
+_+ mitarbeiter: Mitarbeiter[1..*]_
+- nachname: String
+- vorname: String
+- strasse: String
+- plz: int
+- ort: String 
+--
++ toString(): String</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>340</x>
+      <y>350</y>
+      <w>140</w>
+      <h>60</h>
+    </coordinates>
+    <panel_attributes>main
+--
+--
+_+ main(string: String)_</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>530</x>
+      <y>560</y>
+      <w>230</w>
+      <h>310</h>
+    </coordinates>
+    <panel_attributes>mainPanel
+--
+_- kostenartAnzahl :int[][]_
+_- gesamtVerguetung :double[][]_
+_- maDaten :String[][]_
+- cbMItarbeiter :JComboBox
+- tfDatum :JTextField
+- tfNachanme :JTextField
+- tfVorname :JTextField
+- tfStrasse :JTextField
+- tfPlz :JTextField
+- tfOrt  :JTextField
+- ueberschrift :JLabel
+- meldungen :JLabel
+--
++ MainPanel()
++ actionPerformed(e :ActionEvent)
+- formularLeeren()
+- maDatenLeeren()
+- tabelleAusnullen()
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>440</x>
+      <y>400</y>
+      <w>130</w>
+      <h>180</h>
+    </coordinates>
+    <panel_attributes>lt=-
+erzeugt &gt;</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;70.0;110.0;70.0;110.0;160.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>360</x>
+      <y>570</y>
+      <w>190</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>lt=-
+holt sich MA &gt;</panel_attributes>
+    <additional_attributes>170.0;20.0;10.0;20.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>610</x>
+      <y>280</y>
+      <w>550</w>
+      <h>120</h>
+    </coordinates>
+    <panel_attributes>DBini
+--
+--
+_+ erzeugeMitarbeiter()_
+_+ holeKostenart(Object[][])_
+_+ speichereMitarbeiter(:String[]): int_
+_+ schreibeKostenart(:Date, ID :int, kostenartAnahl :int[][], Gesamtverguetung :double[])_
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>620</x>
+      <y>390</y>
+      <w>160</w>
+      <h>190</h>
+    </coordinates>
+    <panel_attributes>lt=-
+schnittstelle zur DB ^</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;170.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>710</x>
+      <y>60</y>
+      <w>310</w>
+      <h>90</h>
+    </coordinates>
+    <panel_attributes>Hilfsmethoden
+--
+--
+_+ arrayVergroessern(:Mitarbeiter[]): Mitarbeiter[]_
+_+ fuelleCombobox(:JCombobox, :Mitarbeiter[])_
+_+ exsistMitarbeiter(:String[]): Mitarbeiter_
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>940</x>
+      <y>690</y>
+      <w>190</w>
+      <h>130</h>
+    </coordinates>
+    <panel_attributes>Config
+--
+_+ TREIBER: String_
+_+ KOSTEN_URI: String_
+_+ DATUM_FORMAT: String_
+_+ DATE_VALIDTION: String_
+--
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>190</x>
+      <y>280</y>
+      <w>440</w>
+      <h>240</h>
+    </coordinates>
+    <panel_attributes>lt=-
+&lt; erzeugt MA aus der DB</panel_attributes>
+    <additional_attributes>10.0;220.0;10.0;20.0;420.0;20.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>760</x>
+      <y>140</y>
+      <w>180</w>
+      <h>160</h>
+    </coordinates>
+    <panel_attributes>lt=-
+stellt Methoden Bereit v</panel_attributes>
+    <additional_attributes>10.0;140.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>750</x>
+      <y>100</y>
+      <w>640</w>
+      <h>530</h>
+    </coordinates>
+    <panel_attributes>lt=-
+stellt Methoden Bereit v</panel_attributes>
+    <additional_attributes>10.0;510.0;470.0;510.0;470.0;10.0;270.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>750</x>
+      <y>680</y>
+      <w>210</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>lt=-
+&lt; gibt Einstellungen weiter</panel_attributes>
+    <additional_attributes>190.0;20.0;10.0;20.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>850</x>
+      <y>390</y>
+      <w>290</w>
+      <h>320</h>
+    </coordinates>
+    <panel_attributes>lt=-
+gibt Einstellungen weiter ^</panel_attributes>
+    <additional_attributes>270.0;300.0;270.0;180.0;10.0;180.0;10.0;10.0</additional_attributes>
+  </element>
+</diagram>
