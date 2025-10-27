@@ -11,7 +11,7 @@ public class Config {
 	/** Datumsformat der Eingabe */
 	public static final String DATUM_FORMAT = "dd.MM.yyyy";
 	
-	/** DRegulearer Ausdruck um das eingegebene Datum<br>
+	/** Regulearer Ausdruck um das eingegebene Datum<br>
 	 * auf Gueltigkeit zu Pruefen */
 	public static final String DATE_VALIDATION = "^(0[1-9]|[12][0-9]|3[01])\\.(0[1-9]|1[0-2])\\.\\d{4}$";
 }

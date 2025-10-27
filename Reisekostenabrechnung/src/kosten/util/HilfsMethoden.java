@@ -4,13 +4,13 @@ import javax.swing.JComboBox;
 
 public class HilfsMethoden {
 	/**
-	 * Vergroesert ein Uebergebendes Array um 1 Element
+	 * Vergroesert das Mitarbeiter Array um 1 Element
 	 * @param array das Zu vergroesernde Array
 	 * @return Gibt das Vergroeserte Array zurueck damit man es ggf.
 	 * 		   in den benoetigen Objekt Typ casten kann
 	 */
-	public static Object[] arrayVergroesern(Object[] array) {
-		Object[] temp = new Object[array.length+1];		
+	public static Mitarbeiter[] arrayVergroesern(Mitarbeiter[] array) {
+		Mitarbeiter[] temp = new Mitarbeiter[array.length+1];		
 		for(int i = 0; i < array.length; i++) {
 			temp[i] = array[i];
 		} 		
@@ -25,11 +25,11 @@ public class HilfsMethoden {
 	 * @param array Mitarbeiter Array
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static void fuelleCombobox(JComboBox combobox, Object[] array) {
+	public static void fuelleCombobox(JComboBox combobox, Mitarbeiter[] array) {
 		combobox.removeAllItems();
 		combobox.addItem(null);
-		for(Object o: array) {
-			combobox.addItem(o);
+		for(Mitarbeiter ma: array) {
+			combobox.addItem(ma);
 		}
 	}
 
@@ -42,12 +42,12 @@ public class HilfsMethoden {
 	 */
 	public static Mitarbeiter exsistMitarbeiter(String[] maDaten) {
 		for(int i = 0; i < Mitarbeiter.mitarbeiter.length; i++) {
-			if(((Mitarbeiter) Mitarbeiter.mitarbeiter[i]).getNachname().equals(maDaten[0])
-			&& ((Mitarbeiter) Mitarbeiter.mitarbeiter[i]).getVorname().equals(maDaten[1])
-			&& ((Mitarbeiter) Mitarbeiter.mitarbeiter[i]).getStrasse().equals(maDaten[2])
-			&& ((Mitarbeiter) Mitarbeiter.mitarbeiter[i]).getPlz() == Integer.parseInt(maDaten[3])
-			&& ((Mitarbeiter) Mitarbeiter.mitarbeiter[i]).getOrt().equals(maDaten[4])){
-				return ((Mitarbeiter) Mitarbeiter.mitarbeiter[i]);
+			if(Mitarbeiter.mitarbeiter[i].getNachname().equals(maDaten[0])
+			&& Mitarbeiter.mitarbeiter[i].getVorname().equals(maDaten[1])
+			&& Mitarbeiter.mitarbeiter[i].getStrasse().equals(maDaten[2])
+			&& Mitarbeiter.mitarbeiter[i].getPlz() == Integer.parseInt(maDaten[3])
+			&& Mitarbeiter.mitarbeiter[i].getOrt().equals(maDaten[4])){
+				return Mitarbeiter.mitarbeiter[i];
 			}
 		}
 		return null;

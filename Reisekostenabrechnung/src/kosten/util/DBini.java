@@ -70,7 +70,8 @@ public class DBini {
 			// Speichert die Kostenarten ins Tabellen Array
 			while(result.next()) {
 				array[i][0] = result.getString("beschreibung");
-				array[i][2] = result.getDouble("einzelverguetung") + "";
+				// Der Double Wert wird auf zwei stellen nach dem Komma vorformatiert
+				array[i][2] = String.format("%.2f", result.getDouble("einzelverguetung"));
 				i++;
 			}
 						
